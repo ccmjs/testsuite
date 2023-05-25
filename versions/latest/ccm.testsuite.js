@@ -4,20 +4,24 @@
  * @overview ccmjs-based web component for unit testing
  * @author André Kless <andre.kless@web.de> 2023
  * @license The MIT License (MIT)
- * @version latest
+ * @version 4.0.0
+ * @changes
+ * - uses ccm.js v27.5.0 as default
+ * - uses helper.mjs v8.4.2 as default
+ * - uses unit tests in tests.js as default
  */
 
 ( () => {
   const component = {
     name: 'testsuite',
-    ccm: 'https://ccmjs.github.io/testsuite/public/latest/libs/ccm/ccm.js',
+    ccm: 'https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/ccm.js',
     config: {
-      "css": [ "ccm.load", "https://ccmjs.github.io/testsuite/public/latest/resources/styles.css" ],
-      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/public/latest/libs/ccm/helper.js", "type": "module" } ],
-      "html": [ "ccm.load", "https://ccmjs.github.io/testsuite/public/latest/resources/templates.html" ],
+      "css": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/styles.css" ],
+      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/helper.js", "type": "module" } ],
+      "html": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/templates.html" ],
       "onfinish": { "log": true },
       // "package": "subpackage",
-      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/public/latest/resources/tests.js" ]
+      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/tests.js" ]
     },
     Instance: function () {
 

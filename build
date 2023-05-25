@@ -1,0 +1,8 @@
+#!/bin/bash
+mkdir -p versions
+rm -r versions/latest
+mkdir versions/latest
+shopt -s extglob
+cp -R !(node_modules|versions|.gitignore|build|favicon.ico|LICENSE|README.md) versions/latest
+shopt -u extglob
+find ./versions/latest -type f -print0 | xargs -0 perl -pi -e 's/\.\/\.\//https:\/\/ccmjs.github.io\/testsuite\/versions\/latest\//g'

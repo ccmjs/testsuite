@@ -4,20 +4,24 @@
  * @overview ccmjs-based web component for unit testing
  * @author André Kless <andre.kless@web.de> 2023
  * @license The MIT License (MIT)
- * @version latest
+ * @version 4.0.0
+ * @changes
+ * - uses ccm.js v27.5.0 as default
+ * - uses helper.mjs v8.4.2 as default
+ * - uses unit tests in tests.js as default
  */
 
 ( () => {
   const component = {
     name: 'testsuite',
-    ccm: './libs/ccm/ccm.js',
+    ccm: '././libs/ccm/ccm.js',
     config: {
-      "css": [ "ccm.load", "./resources/styles.css" ],
-      "helper": [ "ccm.load", { "url": "./libs/ccm/helper.js", "type": "module" } ],
-      "html": [ "ccm.load", "./resources/templates.html" ],
+      "css": [ "ccm.load", "././resources/styles.css" ],
+      "helper": [ "ccm.load", { "url": "././libs/ccm/helper.js", "type": "module" } ],
+      "html": [ "ccm.load", "././resources/templates.html" ],
       "onfinish": { "log": true },
       // "package": "subpackage",
-      "tests": [ "ccm.load", "./resources/tests.js" ]
+      "tests": [ "ccm.load", "././resources/tests.js" ]
     },
     Instance: function () {
 

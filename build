@@ -1,8 +1,26 @@
 #!/bin/bash
+url=https://ccmjs.github.io/testsuite/
+
+# create folder 'versions' if not exists
 mkdir -p versions
-rm -r versions/latest
+
+# create empty subfolder for latest version
+rm -rf versions/latest
 mkdir versions/latest
+
+# copy relevant folders/files to this subfolder
 shopt -s extglob
-cp -R !(.idea|node_modules|versions|.gitignore|build|favicon.ico|LICENSE|README.md) versions/latest
+cp -R !(node_modules|versions|build|favicon.ico|*.html|LICENSE|README.md) versions/latest
 shopt -u extglob
-find ./versions/latest -type f -print0 | xargs -0 perl -pi -e 's/\.\/\.\//https:\/\/ccmjs.github.io\/testsuite\/versions\/latest\//g'
+
+# replace locale paths that start with '././' with absolute paths
+str=s\/\\.\\/\\.\\//${url//\//\\\/}versions\\/latest\\//g
+find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+
+# create empty subfolder for specific version
+version=$(awk '/@version/{print $3}' ccm.*.js)
+rm -rf "versions/${version}"
+mkdir "versions/${version}"
+
+# copy folders/files from latest version to specific version
+cp -R versions/latest/* "versions/${version}"

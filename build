@@ -1,7 +1,9 @@
 #!/bin/bash
-url=https://ccmjs.github.io/testsuite/
 
-# create folder 'versions' if not exists
+# absolute path for public access
+url="https://ccmjs.github.io/testsuite/"
+
+# create versions folder if not exists
 mkdir -p versions
 
 # create empty subfolder for latest version
@@ -16,6 +18,24 @@ shopt -u extglob
 # replace locale paths that start with '././' with absolute paths
 str=s\/\\.\\/\\.\\//${url//\//\\\/}versions\\/latest\\//g
 find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+
+# minify CSS files
+for i in $(find ./versions/latest -name \*.css); do
+  i="${i%.*}"
+  csso -i ${i}.css -o ${i}.min.css
+done
+
+# minify JS files
+for i in $(find ./versions/latest -name \*.js); do
+  i="${i%.*}"
+  terser ${i}.js -o ${i}.min.js --comments false --source-map "url='${i}.min.js.map'"
+done
+
+# minify MJS files
+for i in $(find ./versions/latest -name \*.mjs); do
+  i="${i%.*}"
+  terser ${i}.mjs -o ${i}.min.mjs --comments false --source-map "url='${i}.min.mjs.map'"
+done
 
 # create empty subfolder for specific version
 version=$(awk '/@version/{print $3}' ccm.*.js)

@@ -12,7 +12,7 @@ mkdir versions/latest
 
 # copy relevant folders/files to this subfolder
 shopt -s extglob
-cp -R !(node_modules|versions|build|favicon.ico|*.html|LICENSE|README.md) versions/latest
+cp -R !(node_modules|versions|build|favicon.ico|*.html|LICENSE|README.md|package.json|package-lock.json) versions/latest
 shopt -u extglob
 
 # replace locale paths that start with '././' with absolute paths
@@ -23,6 +23,14 @@ find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
 for i in $(find ./versions/latest -name \*.css); do
   i="${i%.*}"
   csso -i ${i}.css -o ${i}.min.css
+
+  # update paths where minified CSS files are used
+  css=${i:1}.css
+  css=${css////\\/}
+  min=${i:1}.min.css
+  min=${min////\\/}
+  str=s/${css}/${min}/g
+  find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
 done
 
 # minify JS files

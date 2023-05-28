@@ -1,4 +1,9 @@
 #!/bin/bash
+# Creates a versions folder with latest version and specific version folders.
+# Relative paths are replaced by absolute paths.
+# In addition, CSS/JS/MJS files are minimized and the paths adjusted accordingly.
+# author: André Kless <andre.kless@web.de> 2023
+# version: 1.0.0
 
 # create versions folder if not exists
 mkdir -p versions
@@ -9,7 +14,7 @@ mkdir versions/latest
 
 # copy relevant folders/files to this subfolder
 shopt -s extglob
-cp -R !(node_modules|versions|build|favicon.ico|*.html|LICENSE|README.md|package.json|package-lock.json) versions/latest
+cp -R !(docs|node_modules|tests|versions|build|favicon.ico|*.html|LICENSE|README.md|package.json|package-lock.json) versions/latest
 shopt -u extglob
 
 # replace locale paths that start with '././' with absolute paths

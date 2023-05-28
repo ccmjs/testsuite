@@ -2,9 +2,9 @@
 
 /**
  * @overview ccmjs-based web component for unit testing
- * @author André Kless <andre.kless@web.de> 2023
+ * @author André Kless <andre.kless@web.de> (https://github.com/akless) 2016-2017, 2019-2020, 2022-2023
  * @license The MIT License (MIT)
- * @version 4.2.0
+ * @version 4.0.0
  * @domain https://ccmjs.github.io/testsuite/
  * @changes
  * - uses ccm.js v27.5.0 as default

@@ -1,6 +1,6 @@
 /**
  * @overview unit tests of ccm component for unit tests
- * @author André Kless <andre.kless@web.de> 2019
+ * @author André Kless <andre.kless@web.de> (https://github.com/akless) 2019
  * @license The MIT License (MIT)
  */
 

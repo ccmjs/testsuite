@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# absolute path for public access
-url="https://ccmjs.github.io/testsuite/"
-
 # create versions folder if not exists
 mkdir -p versions
 
@@ -16,37 +13,54 @@ cp -R !(node_modules|versions|build|favicon.ico|*.html|LICENSE|README.md|package
 shopt -u extglob
 
 # replace locale paths that start with '././' with absolute paths
-str=s\/\\.\\/\\.\\//${url//\//\\\/}versions\\/latest\\//g
+domain=$(awk '/@domain/{print $3}' ccm.*.js)
+str=s\/\\.\\/\\.\\//${domain//\//\\\/}versions\\/latest\\//g
 find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
 
-# minify CSS files
-for i in $(find ./versions/latest -name \*.css); do
+# help function for update paths where minified type of files are used
+hlp() {
+  file=${1:1}.${2}
+  file=${file////\\/}
+  min=${1:1}.min.${2}
+  min=${min////\\/}
+  str=s/${file}/${min}/g
+  find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+}
+
+# minify css files
+for i in $(find ./versions/latest -name \*.css)
+do
   i="${i%.*}"
   csso -i ${i}.css -o ${i}.min.css
 
   # update paths where minified CSS files are used
-  css=${i:1}.css
-  css=${css////\\/}
-  min=${i:1}.min.css
-  min=${min////\\/}
-  str=s/${css}/${min}/g
-  find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+  hlp $i css
 done
 
-# minify JS files
-for i in $(find ./versions/latest -name \*.js); do
+# minify js files
+for i in $(find ./versions/latest -name \*.js)
+do
   i="${i%.*}"
   terser ${i}.js -o ${i}.min.js --comments false --source-map "url='${i}.min.js.map'"
+
+  # update paths where minified JS files are used
+  hlp $i js
 done
 
-# minify MJS files
-for i in $(find ./versions/latest -name \*.mjs); do
+# minify mjs files
+for i in $(find ./versions/latest -name \*.mjs)
+do
   i="${i%.*}"
   terser ${i}.mjs -o ${i}.min.mjs --comments false --source-map "url='${i}.min.mjs.map'"
+
+  # update paths where minified JS files are used
+  hlp $i mjs
 done
 
 # create empty subfolder for specific version
 version=$(awk '/@version/{print $3}' ccm.*.js)
+version=v${version%.*.*}
+
 rm -rf "versions/${version}"
 mkdir "versions/${version}"
 

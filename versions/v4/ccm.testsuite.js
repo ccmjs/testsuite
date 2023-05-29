@@ -15,14 +15,14 @@
 ( () => {
   const component = {
     name: 'testsuite',
-    ccm: 'https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/ccm.min.js',
+    ccm: 'https://ccmjs.github.io/testsuite/versions/v4/libs/ccm/ccm.min.js',
     config: {
-      "css": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/styles.min.css" ],
-      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/helper.min.js", "type": "module" } ],
-      "html": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/templates.html" ],
+      "css": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/v4/resources/styles.min.css" ],
+      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/versions/v4/libs/ccm/helper.min.js", "type": "module" } ],
+      "html": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/v4/resources/templates.html" ],
       "onfinish": { "log": true },
       // "package": "subpackage",
-      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/tests.min.js" ]
+      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/v4/resources/tests.min.js" ]
     },
     Instance: function () {
 

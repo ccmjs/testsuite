@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Creates a versions folder with latest version and specific version folders.
 # Relative paths are replaced by absolute paths.
 # In addition, CSS/JS/MJS files are minimized and the paths adjusted accordingly.
@@ -81,3 +82,7 @@ mkdir "versions/${version}"
 
 # copy folders/files from latest version to specific version
 cp -R versions/latest/* "versions/${version}"
+
+# change folder name in absolute paths
+str=s/"versions\/latest/versions\/${version}"/g
+find "./versions/${version}" -type f -print0 | xargs -0 perl -pi -e $str

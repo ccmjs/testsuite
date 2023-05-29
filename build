@@ -43,11 +43,14 @@ do
 done
 
 # minify js files
-for i in $(find ./versions/latest -name \*.js)
+for i in $(find versions/latest -name \*.js)
 do
-  i="${i%.*}"
+  dir="$PWD"
   name="$(basename -- $i)"
-  terser ${i}.js -o ${i}.min.js --source-map "url='${name}.min.js.map'" --comments false
+  name="${name%.*}"
+  cd "$(dirname -- $i)"
+  terser ${name}.js -o ${name}.min.js --source-map "url='${name}.min.js.map'" --comments false
+  cd $dir
 
   # update paths where minified JS files are used
   hlp $i js
@@ -56,8 +59,12 @@ done
 # minify mjs files
 for i in $(find ./versions/latest -name \*.mjs)
 do
-  i="${i%.*}"
-  terser ${i}.mjs -o ${i}.min.mjs --comments false --source-map "url='${domain}${i:2}.min.mjs.map'"
+  dir="$PWD"
+  name="$(basename -- $i)"
+  name="${name%.*}"
+  cd "$(dirname -- $i)"
+  terser ${name}.mjs -o ${name}.min.mjs --source-map "url='${name}.min.mjs.map'" --comments false
+  cd $dir
 
   # update paths where minified JS files are used
   hlp $i mjs

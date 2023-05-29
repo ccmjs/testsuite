@@ -15,14 +15,14 @@
 ( () => {
   const component = {
     name: 'testsuite',
-    ccm: 'https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/ccm.min.js',
+    ccm: 'https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/ccm.js',
     config: {
       "css": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/styles.min.css" ],
-      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/helper.min.js", "type": "module" } ],
+      "helper": [ "ccm.load", { "url": "https://ccmjs.github.io/testsuite/versions/latest/libs/ccm/helper.js", "type": "module" } ],
       "html": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/templates.html" ],
       "onfinish": { "log": true },
       // "package": "subpackage",
-      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/tests.min.js" ]
+      "tests": [ "ccm.load", "https://ccmjs.github.io/testsuite/versions/latest/resources/tests.js" ]
     },
     Instance: function () {
 

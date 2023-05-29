@@ -46,7 +46,7 @@ done
 for i in $(find ./versions/latest -name \*.js)
 do
   i="${i%.*}"
-  terser ${i}.js -o ${i}.min.js --comments false --source-map "url='${domain}${i:2}.min.js.map'"
+  terser ${i}.js --comments false --source-map --output ${i}.min.js
 
   # update paths where minified JS files are used
   hlp $i js

@@ -21,16 +21,16 @@ shopt -u extglob
 # replace locale paths that start with '././' with absolute paths
 domain=$(awk '/@domain/{print $3}' ccm.*.js)
 str=s\/\\.\\/\\.\\//${domain//\//\\\/}versions\\/latest\\//g
-find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+find ./versions/latest -type f -print0 | xargs -0 perl -pi -e "$str"
 
 # help function for update paths where minified type of files are used
-hlp() {
+min() {
   file=${1:1}.${2}
   file=${file////\\/}
   min=${1:1}.min.${2}
   min=${min////\\/}
   str=s/${file}/${min}/g
-  find ./versions/latest -type f -print0 | xargs -0 perl -pi -e $str
+  find ./versions/latest -type f -print0 | xargs -0 perl -pi -e "$str"
 }
 
 # minify css files
@@ -40,38 +40,29 @@ do
   csso -i ${i}.css -o ${i}.min.css
 
   # update paths where minified CSS files are used
-  hlp $i css
+  min $i css
 done
 
-# minify js files
-for i in $(find versions/latest -name \*.js)
-do
-  dir="$PWD"
-  name="$(basename -- $i)"
-  name="${name%.*}"
-  cd "$(dirname -- $i)"
-  terser ${name}.js -o ${name}.min.js --source-map "url='${name}.min.js.map'" --comments false
-  cd $dir
+# help function to minify all files with terser
+minify() {
+  for i in $(find versions/latest -name \*."$1")
+  do
+    dir="$PWD"
+    name=$(basename -- "$i")
+    name="${name%.*}"
+    cd "$(dirname -- "$i")"
+    terser "${name}.${1}" -o "${name}.min.${1}" --source-map "url='${name}.min.${1}.map'" --comments false
+    cd "$dir"
 
-  # update paths where minified JS files are used
-  i="${i%.*}"
-  hlp "./$i" js
-done
+    # update paths where minified JS files are used
+    i="${i%.*}"
+    min "./$i" "$1"
+  done
+}
 
-# minify mjs files
-for i in $(find versions/latest -name \*.mjs)
-do
-  dir="$PWD"
-  name="$(basename -- $i)"
-  name="${name%.*}"
-  cd "$(dirname -- $i)"
-  terser ${name}.mjs -o ${name}.min.mjs --source-map "url='${name}.min.mjs.map'" --comments false
-  cd $dir
-
-  # update paths where minified JS files are used
-  i="${i%.*}"
-  hlp $i mjs
-done
+# minify js/mjs files
+minify js
+minify mjs
 
 # create empty subfolder for specific version
 version=$(awk '/@version/{print $3}' ccm.*.js)
@@ -85,4 +76,4 @@ cp -R versions/latest/* "versions/${version}"
 
 # change folder name in absolute paths
 str=s/"versions\/latest/versions\/${version}"/g
-find "./versions/${version}" -type f -print0 | xargs -0 perl -pi -e $str
+find "./versions/${version}" -type f -print0 | xargs -0 perl -pi -e "$str"

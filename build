@@ -53,11 +53,12 @@ do
   cd $dir
 
   # update paths where minified JS files are used
-  hlp $i js
+  i="${i%.*}"
+  hlp "./$i" js
 done
 
 # minify mjs files
-for i in $(find ./versions/latest -name \*.mjs)
+for i in $(find versions/latest -name \*.mjs)
 do
   dir="$PWD"
   name="$(basename -- $i)"
@@ -67,6 +68,7 @@ do
   cd $dir
 
   # update paths where minified JS files are used
+  i="${i%.*}"
   hlp $i mjs
 done
 

@@ -54,7 +54,7 @@
       this.ready = async () => {
 
         // set shortcut to help functions
-        $ = Object.assign( {}, this.ccm.helper, this.helper );
+        $ = Object.assign( {}, this.ccm.helper, this.helper ); $.use( this.ccm );
 
         // no package path? => abort
         if ( !this.package ) return;
@@ -120,7 +120,7 @@
           package_obj.tests && await runPackageTests( package_obj.tests );
 
           // remove no more needed properties (only package properties remain)
-          delete package_obj.setup; delete package_obj.tests;
+          delete package_obj.setup; delete package_obj.tests; delete package_obj.finally;
 
           // process the unit tests subpackages
           for ( const key in package_obj ) {
@@ -149,14 +149,14 @@
               // has website area?
               if ( self.element ) {
 
-                // show that another test will be executed
+                // show with a loading icon that another test will be executed
                 main_elem.querySelector( '#executed' ).appendChild( $.loading( self ) );
 
                 // render table row for current test
                 test_elem = $.html( self.html.test, test.name );
                 table_elem.appendChild( test_elem ) ;
 
-                // for the moment render loading as result
+                // show loading icon until unit test is finished
                 result_elem = test_elem.querySelector( '.result' );
                 result_elem.appendChild( $.loading( self ) );
 
@@ -270,8 +270,8 @@
               /** replaces loading icon with test result and increases passed or failed counter */
               function addResult( result ) {
                 const value = result ? 'passed' : 'failed';
-                if ( result ) results.passed++; else results.failed++;
-                if ( self.element ) $.setContent( result_elem, $.html( self.html.result, { value: value } ) );
+                result ? results.passed++ : results.failed++;
+                self.element && $.setContent( result_elem, $.html( self.html.result, { value: value } ) );
                 results.details[ package_path + '.' + test.name ] = result;
               }
 

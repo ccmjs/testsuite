@@ -6,32 +6,6 @@
  * @author André Kless <andre.kless@web.de> 2014-2023
  * @license The MIT License (MIT)
  * @version latest (27.5.0)
- * @changes
- * version 27.5.0 (23.03.2023)
- * - added third parameter: ccm.start(component,config,element)
- * version 27.4.2 (04.11.2022)
- * - bugfix in ccm.helper.html2json: Preserve whitespaces and line breaks in pre-tags.
- * version 27.4.1 (20.10.2022)
- * - bugfix in ccm.helper.html for checked checkboxes
- * version 27.4.0 (17.06.2022)
- * - ccm.helper.generateKey returns a Universally Unique Identifier (UUID)
- * - better error handling when using IndexedDB
- * version 27.3.1 (14.02.2022)
- * - store.set() and store.del() returns original operation result
- * version 27.3.0 (14.02.2022)
- * - ccm.helper.html() accepts a instance reference and returns it as result
- * version 27.2.0 (17.01.2022)
- * - ccm.helper.isSubset() can check if a property not exists with value 'null'
- * version 27.1.2 (27.12.2021)
- * - highestByProperty() and nearestByProperty() returns null if there is no start instance
- * version 27.1.1 (28.09.2021)
- * - an instance created with ccm.start() is ready AFTER instance.start() is finished
- * version 27.1.0 (27.09.2021)
- * - added attribute 'ccm' for <ccm-app> to define used version of ccmjs (<ccm-app ccm="27.1.0" component="..." src="...">)
- * version 27.0.0 (24.09.2021)
- * - a source configuration is stored at property 'src' instead of 'key'
- * - an instance configuration can have recursive source configurations
- * (for older version changes see ccm-26.4.4.js)
  */
 
 ( () => {

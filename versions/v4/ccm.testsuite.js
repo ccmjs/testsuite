@@ -7,6 +7,7 @@
  * @version 4.0.0
  * @domain https://ccmjs.github.io/testsuite/
  * @changes
+ * version 4.0.0 (18.09.2023)
  * - uses ccm.js v27.5.0 as default
  * - uses helper.mjs v8.4.2 as default
  * - uses unit tests in tests.js as default

@@ -13,7 +13,9 @@
   display: flex;
 }
 
-#executed, #passed, #failed {
+#executed,
+#passed,
+#failed {
   padding: 0.5em;
 }
 
@@ -31,15 +33,15 @@
 }
 
 #executed:before {
-  content: 'executed: '
+  content: "executed: ";
 }
 
 #passed:before {
-  content: 'passed: '
+  content: "passed: ";
 }
 
 #failed:before {
-  content: 'failed: '
+  content: "failed: ";
 }
 
 #packages {
@@ -94,14 +96,14 @@
 }
 
 .expected:before {
-  content: 'expected';
+  content: "expected";
   margin-right: 0.2em;
   background-color: lime;
   padding: 0 0.1em;
 }
 
 .actual:before {
-  content: 'but was';
+  content: "but was";
   margin: 0 0.2em;
   background-color: tomato;
   padding: 0 0.1em;

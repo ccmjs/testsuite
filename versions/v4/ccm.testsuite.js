@@ -4,13 +4,14 @@
  * @overview ccmjs-based web component for unit testing
  * @author André Kless <andre.kless@web.de> (https://github.com/akless) 2016-2017, 2019-2020, 2022-2023
  * @license The MIT License (MIT)
- * @version 4.0.0
+ * @version 4.1.0
  * @domain https://ccmjs.github.io/testsuite/
  * @changes
  * version 4.0.0 (18.09.2023)
  * - uses ccm.js v27.5.0 as default
  * - uses helper.mjs v8.4.2 as default
- * - uses unit tests in tests.js as default
+ * - uses unit tests from tests.js as default
+ * - more than one assert call in one unit test
  */
 
 ( () => {
@@ -28,7 +29,7 @@
     Instance: function () {
 
       /**
-       * Shortcut to helper functions
+       * shortcut to helper functions
        * @private
        * @type {Object.<string,function>}
        */
@@ -147,7 +148,7 @@
             // run unit tests
             await $.asyncForEach( Object.keys( tests ).map( key => tests[ key ] ), async test => {
 
-              // has website area?
+              // has website area? => add table row with loading icon
               if ( self.element ) {
 
                 // show with a loading icon that another test will be executed
@@ -175,7 +176,7 @@
                  * finishes current test with a positive result
                  * @function passed
                  */
-                passed: () => addResult( true ),
+                passed: () => setResult( true ),
 
                 /**
                  * finishes current test with a negative result
@@ -183,8 +184,7 @@
                  * @param {string} [message] - message that explains why the test has failed
                  */
                 failed: message => {
-                  addResult( false );
-                  if ( message ) addMessage( message );
+                  setResult( false, message );
                 },
 
                 /**
@@ -192,14 +192,14 @@
                  * @function assertTrue
                  * @param {boolean} condition
                  */
-                assertTrue: condition => addResult( !!condition ),
+                assertTrue: condition => setResult( !!condition ),
 
                 /**
                  * finishes current test with negative result if the given condition is true
                  * @function assertFalse
                  * @param {boolean} condition
                  */
-                assertFalse: condition => addResult( !condition ),
+                assertFalse: condition => setResult( !condition ),
 
                 /**
                  * finishes current test with positive result if given expected and actual value contains same data (compare by reference)
@@ -208,9 +208,7 @@
                  * @param {*} actual - actual value
                  */
                 assertSame: ( expected, actual ) => {
-                  const result = expected == actual;
-                  addResult( result );
-                  if ( !result ) addComparison( expected, actual );
+                  setResult( expected == actual, { expected, actual } );
                 },
 
                 /**
@@ -223,9 +221,7 @@
                 assertEquals: ( expected, actual, delta ) => {
                   if ( typeof expected === 'object' ) expected = JSON.stringify( expected );
                   if ( typeof actual   === 'object' ) actual   = JSON.stringify( actual );
-                  const result = delta ? Math.abs( expected - actual ) < delta : expected === actual;
-                  addResult( result );
-                  if ( !result ) addComparison( expected, actual );
+                  setResult( delta ? Math.abs( expected - actual ) < delta : expected === actual, { expected, actual } );
                 },
 
                 /**
@@ -234,7 +230,7 @@
                  * @param {*} expected - expected value
                  * @param {*} actual - actual value
                  */
-                assertNotSame: ( expected, actual ) => addResult( expected !== actual ),
+                assertNotSame: ( expected, actual ) => setResult( expected !== actual ),
 
                 /**
                  * finishes current test with positive result if given expected value NOT equals given actual value (compare by content)
@@ -254,9 +250,11 @@
                 await test( suite );
               }
               catch ( e ) {
-                addResult( false );
-                addMessage( e.name + ( e.message ? ': ' + e.message : '' ) );
+                !suite.abort && setResult( false, e.name + ( e.message ? ': ' + e.message : '' ) );
               }
+
+              // show test result
+              showResult();
 
               // has website area? => update summary section
               if ( self.element ) {
@@ -268,30 +266,51 @@
               // run all relevant finally functions
               await $.asyncForEach( finallies, final => final( suite ) );
 
-              /** replaces loading icon with test result and increases passed or failed counter */
-              function addResult( result ) {
-                const value = result ? 'passed' : 'failed';
-                result ? results.passed++ : results.failed++;
-                self.element && $.setContent( result_elem, $.html( self.html.result, { value: value } ) );
-                results.details[ package_path + '.' + test.name ] = result;
-              }
-
-              /** show message as detail information for a failed test */
-              function addMessage( message ) {
-                if ( self.element ) test_elem.appendChild( $.html( self.html.message, message ) );
-                results.details[ package_path + '.' + test.name ] = message;
-              }
-
-              /** show expected and actual value as detail information for a failed test */
-              function addComparison( expected, actual ) {
-                if ( self.element ) {
-                  if ( typeof expected === 'object' ) expected = $.stringify( expected );
-                  expected = $.escapeHTML( expected );
-                  if ( typeof actual === 'object' ) actual = $.stringify( actual );
-                  actual = $.escapeHTML( actual );
-                  test_elem.appendChild( $.html( self.html.comparison, expected, actual ) );
+              /**
+               * sets the test result
+               * @param {boolean} result - test result
+               * @param {string|{expected,actual}} message - message or expected and actual value when test is failed
+               */
+              function setResult( result, message ) {
+                if ( suite.abort ) return;
+                suite.result = result;
+                if ( result ) return;
+                suite.abort = true;
+                if ( !message ) return;
+                if ( typeof message === 'string' )
+                  suite.message = message;
+                else {
+                  suite.expected = message.expected;
+                  suite.actual = message.actual;
                 }
-                results.details[ package_path + '.' + test.name ] = { expected: expected, actual: actual };
+              }
+
+              /** replaces loading icon with test result and increases passed or failed counter */
+              function showResult() {
+
+                // show result
+                const value = suite.result ? 'passed' : 'failed';
+                suite.result ? results.passed++ : results.failed++;
+                self.element && $.setContent( result_elem, $.html( self.html.result, { value: value } ) );
+                results.details[ package_path + '.' + test.name ] = suite.result;
+
+                // show optional message when test has failed
+                if ( suite.message ) {
+                  if ( self.element ) test_elem.appendChild( $.html( self.html.message, suite.message ) );
+                  results.details[ package_path + '.' + test.name ] = suite.message;
+                }
+
+                // show expected and actual value when test has failed
+                if ( !suite.result && suite.expected !== undefined && suite.actual !== undefined ) {
+                  if ( self.element ) {
+                    if ( typeof suite.expected === 'object' ) suite.expected = $.stringify( suite.expected );
+                    suite.expected = $.escapeHTML( suite.expected );
+                    if ( typeof suite.actual === 'object' ) suite.actual = $.stringify( suite.actual );
+                    suite.actual = $.escapeHTML( suite.actual );
+                    test_elem.appendChild( $.html( self.html.comparison, suite.expected, suite.actual ) );
+                  }
+                  results.details[ package_path + '.' + test.name ] = { expected: suite.expected, actual: suite.actual };
+                }
               }
 
             } );

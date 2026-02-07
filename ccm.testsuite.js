@@ -273,11 +273,12 @@
                 try {
                   await test(suite);
                 } catch (e) {
-                  !suite.abort &&
-                    setResult(
-                      false,
-                      e.name + (e.message ? ": " + e.message : "")
-                    );
+                  (!suite.abort &&
+                      setResult(
+                          false,
+                          e.name + (e.message ? ": " + e.message : ""),
+                      )) ||
+                  console.error(e);
                 }
 
                 // show test result
